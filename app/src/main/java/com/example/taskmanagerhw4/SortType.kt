@@ -1,5 +1,6 @@
 package com.example.taskmanagerhw4
 
+// Types one can sort tasks in
 enum class SortType {
     DUE_DATE_ASC {
         override fun toString() = "By Due Date (ASC)"
