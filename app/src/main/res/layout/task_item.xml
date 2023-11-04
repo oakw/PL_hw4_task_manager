@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/taskItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        app:layout_constraintEnd_toStartOf="@+id/taskItemDueDate"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/taskItemCompleted"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/taskItemEditAction"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_edit_24" />
+
+    <TextView
+        android:id="@+id/taskItemDueDate"
+        android:layout_width="66dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/taskItemEditAction"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/taskItemCompleted"
+        android:layout_width="49dp"
+        android:layout_height="49dp"
+        app:buttonTint="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/taskItemDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="15dp"
+        app:layout_constraintEnd_toEndOf="@+id/taskItemTitle"
+        app:layout_constraintStart_toStartOf="@+id/taskItemTitle"
+        app:layout_constraintTop_toBottomOf="@+id/taskItemTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
