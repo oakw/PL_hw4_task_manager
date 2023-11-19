@@ -58,7 +58,7 @@ class TaskEditFragment : Fragment() {
                 editedItem.title = binding.createTaskTitle.text.toString()
                 editedItem.description = binding.createTaskDescription.text.toString()
                 editedItem.priorityLevel = binding.createTaskPriority.progress
-                editedItem.dueDate = binding.createTaskDueDate.text.toString()
+                editedItem.dueDate = binding.createTaskDueDate.text.toString().slice(IntRange(0, 9))
                 taskListStore.updateTask(editedItem)
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
@@ -72,7 +72,7 @@ class TaskEditFragment : Fragment() {
                     title = binding.createTaskTitle.text.toString(),
                     description = binding.createTaskDescription.text.toString(),
                     priorityLevel = binding.createTaskPriority.progress,
-                    dueDate = binding.createTaskDueDate.text.toString()
+                    dueDate = binding.createTaskDueDate.text.toString().slice(IntRange(0, 9))
                 ))
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
