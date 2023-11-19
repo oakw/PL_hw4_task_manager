@@ -1,20 +1,24 @@
-package com.example.taskmanagerhw4
+package com.example.taskmanagerhw4.storage.task
 
 import android.graphics.Color
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-class TaskItem(
-    var title: String,
-    var description: String,
-    var dueDate: String,
-    var priorityLevel: Int
+@Entity(tableName = "task_item")
+data class TaskItem(
+    @ColumnInfo(name = "Title") var title: String,
+    @ColumnInfo(name = "Description") var description: String,
+    @ColumnInfo(name = "DueDate") var dueDate: String,
+    @ColumnInfo(name = "PriorityLevel") var priorityLevel: Int,
+    @ColumnInfo(name = "IsCompleted") var completed: Boolean = false,
+    @PrimaryKey @ColumnInfo(name = "UUId") val uuid: String = UUID.randomUUID().toString()
 ) {
-    var completed: Boolean = false
-    val uuid = UUID.randomUUID()
 
 
     // Different priorities are denoted by using different colors

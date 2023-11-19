@@ -1,14 +1,19 @@
 package com.example.taskmanagerhw4
 
 import android.content.Context
+import androidx.room.Room
+import com.example.taskmanagerhw4.storage.AppDatabase
+import com.example.taskmanagerhw4.storage.task.TaskItem
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
 // Performs operations with tasks
 class TaskListStore(context: Context) {
-    val sharedPreferences = context.getSharedPreferences("TaskList", Context.MODE_PRIVATE)
-    val sharedPreferencesSettings = context.getSharedPreferences("TaskListSettings", Context.MODE_PRIVATE)
+    private val db = Room.databaseBuilder(
+        context,
+        AppDatabase::class.java, "task_manager_db"
+    ).allowMainThreadQueries().build()
     var tasks: Array<TaskItem> = arrayOf()
 
     init {
@@ -31,33 +36,30 @@ class TaskListStore(context: Context) {
      * CRUD Operations with the task list
      */
     fun getAllTasks(): Array<TaskItem> {
-        val sortType = sharedPreferencesSettings.getString("SortType", SortType.DUE_DATE_ASC.toString()) ?: SortType.DUE_DATE_ASC.toString()
-        val a = tasks.sortedWith(filterSelectorSort(sortType))
-
-        return tasks.sortedWith(filterSelectorSort(sortType)).toTypedArray()
+        return tasks.sortedWith(filterSelectorSort(getSortType())).toTypedArray()
     }
 
 
     fun addTask(task: TaskItem) {
         tasks = tasks.plus(task)
-        sharedPreferences.edit().putString(task.uuid.toString(), task.toString()).apply()
+        db.taskItemDao().insertAll(task)
     }
 
 
     fun updateTask(updatedTask: TaskItem) {
-        val task = tasks.find { task -> task.uuid.toString() == updatedTask.uuid.toString() }
-        task?.title = updatedTask.title
-        task?.dueDate = updatedTask.dueDate
-        task?.description = updatedTask.description
-        task?.priorityLevel = updatedTask.priorityLevel
-        task?.completed = updatedTask.completed
-        sharedPreferences.edit().putString(updatedTask.uuid.toString(), updatedTask.toString()).apply()
+        val task = tasks.find { task -> task.uuid.toString() == updatedTask.uuid.toString() } ?: return
+        task.title = updatedTask.title
+        task.dueDate = updatedTask.dueDate
+        task.description = updatedTask.description
+        task.priorityLevel = updatedTask.priorityLevel
+        task.completed = updatedTask.completed
+        db.taskItemDao().update(task)
     }
 
 
     fun deleteTask(uuid: String) {
         tasks = (tasks.filterNot { task -> task.uuid.toString() == uuid }).toTypedArray()
-        sharedPreferences.edit().remove(uuid).apply()
+        db.taskItemDao().deleteUsingUUId(uuid)
     }
 
 
@@ -72,26 +74,32 @@ class TaskListStore(context: Context) {
      * Currently edited task details are preserved to correctly restore the state
      */
     fun setCurrentlyEdited(uuid: String) {
-        sharedPreferencesSettings.edit().putString("CurrentlyEdited", uuid).apply()
+        db.settingDao().insertOrUpdateValue("CurrentlyEdited", uuid)
     }
 
 
     fun getCurrentlyEdited(): TaskItem? {
-        val editedUUId = sharedPreferencesSettings.getString("CurrentlyEdited", null)
+        val editedUUId = db.settingDao().getByKey("CurrentlyEdited")
         return editedUUId.let { tasks.find { task -> task.uuid.toString() == editedUUId } }
     }
 
 
     fun stopEditing() {
-        sharedPreferencesSettings.edit().remove("CurrentlyEdited").apply()
+        db.settingDao().deleteByKey("CurrentlyEdited")
     }
 
 
-    // Retrieve all tasks from sharedPreferences to tasklist
+    // Retrieve all tasks from database to tasklist
     private fun refreshAll() {
-        for (value in sharedPreferences.getAll().values) {
-            tasks = tasks.plus(TaskItem.fromJson(value as String))
-        }
+        tasks = arrayOf()
+        tasks = tasks.plus(db.taskItemDao().getAll())
+    }
+
+
+    // Get sort type (in human readable format)
+    fun getSortType(): String
+    {
+        return db.settingDao().getByKey("SortType") ?: SortType.DUE_DATE_ASC.toString()
     }
 
 
@@ -99,7 +107,7 @@ class TaskListStore(context: Context) {
     fun selectSortFilter(typeString: String) {
         val sortType = SortType.values().find { type -> type.toString() == typeString }
         sortType?.let {
-            sharedPreferencesSettings.edit().putString("SortType", sortType.toString()).apply()
+            db.settingDao().insertOrUpdateValue("SortType", sortType.toString())
         }
     }
 

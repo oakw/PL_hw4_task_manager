@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.taskmanagerhw4.storage.task.TaskItem
 
 // Adapter that builds and creates bindings for tasks shown to user
 // Based on https://developer.android.com/develop/ui/views/layout/recyclerview

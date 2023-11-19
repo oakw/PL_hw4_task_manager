@@ -60,12 +60,14 @@ class TaskListFragment : Fragment() {
 
     private fun setupSortingDropdown(context: Context, taskListStore: TaskListStore, recyclerView: RecyclerView) {
         val sortTypes = SortType.values().map{ type -> type.toString() }
+        val taskListStore = TaskListStore(context)
 
         val dropdown: Spinner = binding.taskFilterSelector
         val dropdownOptionsAdapter: ArrayAdapter<String> =
             ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, sortTypes)
 
         dropdown.adapter = dropdownOptionsAdapter
+        dropdown.setSelection(sortTypes.indexOf(taskListStore.getSortType()))
         dropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 taskListStore.selectSortFilter(SortType.DUE_DATE_ASC.toString())
